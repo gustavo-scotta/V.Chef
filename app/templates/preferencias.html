@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Preferências - V.Chef{% endblock %}
+
+{% block page_css %}
+<!-- CSS exclusivo da pagina de Preferencias. -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/preferencias.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Preferencias usa a navegacao da base; aqui fica apenas o conteudo proprio da tela. -->
+<section class="section">
+  <h2 class="section-title">Alimentos que não gosto</h2>
+  <div class="tags-container" id="tags-container"></div>
+  <div class="pesquisa-area">
+    <input type="text" id="foodInput" class="pesquisa" placeholder="Adicionar alimento">
+    <button class="btn-add" type="button" onclick="addTag()">+ Adicionar</button>
+  </div>
+</section>
+
+<!-- Restricoes: cards com chave liga/desliga para marcar alergias ou limitacoes. -->
+<section class="section">
+  <h2 class="section-title">Restrições</h2>
+  <div class="toggle-grid" id="allergy-grid"></div>
+  <div class="pesquisa-area">
+    <input type="text" id="allergyInput" class="pesquisa" placeholder="Adicionar restrição">
+    <button class="btn-add" type="button" onclick="addAllergy()">+ Adicionar</button>
+  </div>
+</section>
+
+<!-- Observacoes: preferencias livres que ajudam a IA a personalizar receitas. -->
+<section class="section">
+  <h2 class="section-title">Observações</h2>
+  <div class="toggle-grid" id="diet-grid"></div>
+  <div class="pesquisa-area">
+    <input type="text" id="dietInput" class="pesquisa" placeholder="Adicionar observação">
+    <button class="btn-add" type="button" onclick="addDiet()">+ Adicionar</button>
+  </div>
+</section>
+
+<!-- Acoes da pagina: mostra feedback visual ao salvar as preferencias locais. -->
+<div class="acoes">
+  <button class="acao-btn save-btn" type="button" onclick="savePrefs()">Salvar Preferências</button>
+</div>
+
+<div class="toast" id="toast">Preferências salvas!</div>
+
+{% endblock %}
+
+{% block page_js %}
+<!-- JS exclusivo da pagina de Preferencias. -->
+<script src="{{ url_for('static', filename='js/preferencias.js') }}"></script>
+{% endblock %}

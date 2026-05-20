@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Despensa - V.Chef{% endblock %}
+
+{% block page_css %}
+<!-- CSS exclusivo da Despensa: busca, categorias, cards e modal. -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/despensa.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Busca e cadastro: area principal para filtrar ou adicionar ingredientes. -->
+<section class="pesquisa-area">
+  <input type="text" id="pesquisa" class="pesquisa" placeholder="Pesquisar ingrediente">
+  <button class="btn-add" id="abrirModal" type="button">+ Adicionar Ingrediente</button>
+</section>
+
+<!-- Categorias da despensa: o JS filtra os cards pelo data-categoria. -->
+<section class="categorias">
+  <button class="categoria ativa" data-categoria="Todos" type="button">Todos</button>
+  <button class="categoria" data-categoria="Vegetais" type="button">Vegetais</button>
+  <button class="categoria" data-categoria="Frutas" type="button">Frutas</button>
+  <button class="categoria" data-categoria="Carnes" type="button">Carnes</button>
+  <button class="categoria" data-categoria="Temperos" type="button">Temperos</button>
+  <button class="categoria" data-categoria="Laticínios" type="button">Laticínios</button>
+  <button class="categoria" data-categoria="Grãos" type="button">Grãos</button>
+  <button class="categoria" data-categoria="Outros" type="button">Outros</button>
+</section>
+
+<!-- Lista renderizada pelo JavaScript da Despensa. -->
+<main class="cards" id="cards"></main>
+
+<!-- Modal de cadastro: fica oculto ate o usuario clicar em adicionar ingrediente. -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>Adicionar Ingrediente</h2>
+    <input type="text" id="nomeInput" placeholder="Digite o ingrediente">
+    <select id="categoriaSelect">
+      <option value="Automático">Categoria automática</option>
+      <option value="Vegetais">Vegetais</option>
+      <option value="Frutas">Frutas</option>
+      <option value="Carnes">Carnes</option>
+      <option value="Temperos">Temperos</option>
+      <option value="Laticínios">Laticínios</option>
+      <option value="Grãos">Grãos</option>
+      <option value="Outros">Outros</option>
+    </select>
+    <select id="unidadeSelect">
+      <option value="unidades">Unidades</option>
+      <option value="kg">Kilogramas</option>
+      <option value="g">Gramas</option>
+      <option value="l">Litros</option>
+      <option value="ml">Mililitros</option>
+    </select>
+    <div class="campo-qtd">
+      <input type="number" id="quantidadeInput" placeholder="Quantidade" min="0.1" step="0.1" value="1">
+    </div>
+    <button class="adicionar" id="adicionarBtn" type="button">Adicionar</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+<!-- JS exclusivo da Despensa: controla localStorage, filtros e modal. -->
+<script src="{{ url_for('static', filename='js/despensa.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,14 @@
+.container-home {
+    width: 200px;
+    background-color: #D4CCC0;;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+};
+
+.titulo {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+};
