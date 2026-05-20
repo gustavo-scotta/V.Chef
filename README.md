@@ -139,7 +139,7 @@ A IA NÃO responde sobre:
 
 ---
 
-# 👨‍🍳 Objetivo do Projeto
+# Objetivo do Projeto
 
 Este projeto foi desenvolvido para praticar:
 
