@@ -168,10 +168,12 @@ class DB:
 
         cur.execute("""
             SELECT
+                d.id,
                 i.nome,
                 d.quantidade,
                 ci.nome,
-                i.unidade_medida
+                i.unidade_medida,
+                i.codigo_icone
             FROM despensa d
 
             LEFT JOIN ingrediente i
@@ -186,6 +188,57 @@ class DB:
         """)
 
         return cur.fetchall()
+
+    # ALTERADO: novo método para aumentar a quantidade de um ingrediente na despensa.
+    def aumentar_ingrediente_despensa(self, id_despensa):
+
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            UPDATE despensa
+            SET quantidade = quantidade + 1
+            WHERE id = ?
+            """,
+            (id_despensa,)
+        )
+
+        self.connection.commit()
+
+    # ALTERADO: novo método para diminuir a quantidade.
+    # Se a quantidade chegar a zero, o item é excluído da despensa.
+    def diminuir_ingrediente_despensa(self, id_despensa):
+
+        cur = self.connection.cursor()
+
+        cur.execute(
+            "SELECT quantidade FROM despensa WHERE id = ?",
+            (id_despensa,)
+        )
+
+        item = cur.fetchone()
+
+        if not item:
+            return
+
+        nova_quantidade = item[0] - 1
+
+        if nova_quantidade <= 0:
+            cur.execute(
+                "DELETE FROM despensa WHERE id = ?",
+                (id_despensa,)
+            )
+        else:
+            cur.execute(
+                """
+                UPDATE despensa
+                SET quantidade = ?
+                WHERE id = ?
+                """,
+                (nova_quantidade, id_despensa)
+            )
+
+        self.connection.commit()
 
 
 banco = DB()

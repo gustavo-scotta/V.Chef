@@ -1,12 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+.home-principal {
+  min-height: 250px;
+  background: #f7eee5;
+  padding: 30px;
+  border-radius: 0 0 40px 40px;
+
+  display: flex;
+  flex-direction: column;
+}
+
 .container-home {
-  width: 200px;
+  width: 100%;
+  max-width: 300px;
   background-color: #d4ccc0;
   border-radius: 5px;
   padding: 20px;
-  margin: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+@media (max-width: 480px) {
+  .container-home {
+    padding: 16px;
+  }
+}
+
+.container-home ul {
+  font-size: 19px;
+  padding: 0 0px 0 25px;
+}
 .titulo {
   margin-bottom: 20px;
   font-size: 24px;
@@ -14,41 +38,118 @@
 }
 
 /*CARD JS/HTML */
-#resposta-ia {
-  margin-top: 20px;
+.area-resposta {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+  gap: 20px;
+  margin-top: 24px;
 }
 
 .card-receita {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
+  background: #d8d0c3;
+  color: #5b4d27;
+  border-radius: 6px;
+  padding: 16px 18px;
+  min-height: 150px;
+  box-shadow: 8px 8px 18px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-receita:hover {
+  transform: translateY(-4px);
+  box-shadow: 10px 12px 22px rgba(0, 0, 0, 0.22);
 }
 
 .receita-titulo {
-  color: green;
+  margin: 0 0 28px;
+  font-size: 21px;
+  line-height: 1.1;
+  font-family: Georgia, serif;
 }
 
-.receita-descricao {
-  color: #444;
+.receita-resumo {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 18px;
+  line-height: 1.1;
+  font-family: Georgia, serif;
 }
 
-.receita-info {
+.card-receita-grande {
+  grid-column: 1 / -1;
+  max-width: 560px;
+  min-height: auto;
+  cursor: default;
+}
+
+.card-receita-grande:hover {
+  transform: none;
+}
+
+.botao-voltar {
+  border: 0;
+  background: #5b4d27;
+  color: white;
+  border-radius: 4px;
+  padding: 8px 14px;
+  margin-bottom: 18px;
+  cursor: pointer;
+}
+
+/* Imagem do card */
+.receita-imagem {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* Caixa de Input */
+.area-input {
+  margin-top: 32px;
+  width: 100%;
+}
+
+.input-com-botao {
+  width: 100%;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 6px;
 }
 
-.receita-info span {
-  background: #eee;
-  padding: 6px 10px;
+.input-com-botao input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 14px;
+  border: 0;
+  outline: none;
+  font-size: 15px;
+}
+
+.input-com-botao button {
+  height: 30px;
+  padding: 0 18px;
+  border: 0;
   border-radius: 6px;
+  background: #5b4d27;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
-.receita-subtitulo {
-  margin-top: 16px;
-}
+@media (max-width: 480px) {
+  .input-com-botao input {
+    font-size: 16px;
+  }
 
-.receita-lista li {
-  margin-bottom: 6px;
+  .input-com-botao button {
+    padding: 0 14px;
+    font-size: 16px;
+  }
 }

@@ -7,30 +7,33 @@ page_css %}
 />
 {% endblock %} {% block content %}
 
-<div class="container-home">
-  <div class="card-opcoes">
-    <h2 class="titulo">Bem vindo {{usuario}}</h2>
+<div class="home-principal">
+  <div class="container-home">
+    <div class="card-opcoes">
+      <h2 class="titulo">🧑‍🍳 Bem vindo {{usuario}}</h2>
+      <ul>
+        <li>Culinaria Francesa</li>
+        <li>Comida Fit</li>
+        <li>Sobremesas</li>
+        <li>Carnes</li>
+        <li>Sucos</li>
+      </ul>
+    </div>
+  </div>
 
-    <ul>
-      <li>Culinaria Francesa</li>
-      <li>Sobremesas</li>
-      <li>Sucos</li>
-      <li>Comida Fit</li>
-    </ul>
+  <div id="resposta-ia" class="area-resposta"></div>
+
+  <div class="area-input">
+    <div class="input-com-botao">
+      <input
+        id="mensagem"
+        type="text"
+        placeholder="Qual receita deseja aprender hoje"
+      />
+      <button id="botao-enviar">Enviar</button>
+    </div>
   </div>
 </div>
-
-<div>
-  <div>
-    <input
-      id="mensagem"
-      type="text"
-      placeholder="Qual receita deseja aprender hoje"
-    />
-    <button id="botao-enviar">Enviar</button>
-  </div>
-</div>
-<div id="resposta-ia"></div>
 
 {% endblock %} {% block page_js %}
 <!-- JS exclusivo da Home: controla envio de mensagens e renderizacao das respostas. -->

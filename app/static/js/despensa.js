@@ -1,77 +1,10 @@
 // Despensa: script exclusivo da pagina despensa.html.
 
-// Gera um identificador simples para cada ingrediente salvo no navegador.
-function gerarId(){
+// ALTERADO: removemos gerarId e localStorage.
+// Agora o ID vem do banco de dados.
 
-  return Date.now() + Math.floor(Math.random() * 1000);
-
-}
-
-// Persiste a lista atual de ingredientes no localStorage.
-function salvarLocalStorage(){
-
-  localStorage.setItem(
-    'ingredientes',
-    JSON.stringify(ingredientes)
-  );
-
-}
-
-// Carrega ingredientes salvos ou cria exemplos iniciais para a primeira visita.
-function carregarIngredientes(){
-
-  const dados =
-    localStorage.getItem('ingredientes');
-
-  if(dados){
-
-    return JSON.parse(dados);
-
-  }
-
-  return [
-
-    {
-      id:gerarId(),
-      nome:'Tomate',
-      quantidade:6,
-      unidade:'unidades',
-      categoria:'Frutas',
-      emoji:'🍅'
-    },
-
-    {
-      id:gerarId(),
-      nome:'Frango',
-      quantidade:2,
-      unidade:'kg',
-      categoria:'Carnes',
-      emoji:'🍗'
-    },
-
-    {
-      id:gerarId(),
-      nome:'Alho',
-      quantidade:500,
-      unidade:'g',
-      categoria:'Temperos',
-      emoji:'🧄'
-    },
-
-    {
-      id:gerarId(),
-      nome:'Maçã',
-      quantidade:4,
-      unidade:'unidades',
-      categoria:'Frutas',
-      emoji:'🍎'
-    }
-
-  ];
-
-}
-
-let ingredientes = carregarIngredientes();
+// ALTERADO: a lista começa vazia e será carregada do Flask.
+let ingredientes = [];
 
 let categoriaAtual = 'Todos';
 
@@ -84,6 +17,19 @@ const pesquisa =
 
 const modalBg =
   document.getElementById('modalBg');
+
+// ALTERADO: busca os ingredientes salvos no banco pelo Flask.
+async function carregarIngredientes(){
+
+  const resposta =
+    await fetch('/api/despensa');
+
+  ingredientes =
+    await resposta.json();
+
+  renderizar();
+
+}
 
 // Escolhe um emoji visual de acordo com a categoria do ingrediente.
 function buscarEmoji(categoria){
@@ -283,51 +229,26 @@ function renderizar(){
 
 }
 
-// Incrementa a quantidade de um ingrediente.
-function aumentar(id){
+// ALTERADO: incrementa a quantidade no banco de dados.
+async function aumentar(id){
 
-  const ingrediente =
-    ingredientes.find(
-      item => item.id === id
-    );
+  await fetch(`/api/despensa/${id}/aumentar`, {
+    method:'POST'
+  });
 
-  if(!ingrediente) return;
-
-  ingrediente.quantidade++;
-
-  salvarLocalStorage();
-
-  renderizar();
+  await carregarIngredientes();
 
 }
 
-// Diminui a quantidade ou remove o ingrediente quando chega a zero.
-function diminuir(id){
+// ALTERADO: diminui a quantidade no banco.
+// Se chegar a zero, o Flask remove do banco.
+async function diminuir(id){
 
-  const ingrediente =
-    ingredientes.find(
-      item => item.id === id
-    );
+  await fetch(`/api/despensa/${id}/diminuir`, {
+    method:'POST'
+  });
 
-  if(!ingrediente) return;
-
-  if(ingrediente.quantidade > 1){
-
-    ingrediente.quantidade--;
-
-  }
-  else{
-
-    ingredientes =
-      ingredientes.filter(
-        item => item.id !== id
-      );
-
-  }
-
-  salvarLocalStorage();
-
-  renderizar();
+  await carregarIngredientes();
 
 }
 
@@ -420,27 +341,6 @@ document.getElementById('adicionarBtn')
 
   if(nome === '') return;
 
-  const ingredienteExistente =
-    ingredientes.find(item =>
-      item.nome.toLowerCase()
-      === nome.toLowerCase()
-    );
-
-  if(ingredienteExistente){
-
-    ingredienteExistente.quantidade +=
-      quantidade;
-
-    salvarLocalStorage();
-
-    fecharModal();
-
-    renderizar();
-
-    return;
-
-  }
-
   let info;
 
   if(categoriaManual === 'Automático'){
@@ -458,22 +358,26 @@ document.getElementById('adicionarBtn')
 
   }
 
-  ingredientes.push({
-
-    id:gerarId(),
-    nome:nome,
-    quantidade:quantidade,
-    unidade:unidade,
-    categoria:info.categoria,
-    emoji:info.emoji
-
+  // ALTERADO: em vez de ingredientes.push e localStorage,
+  // envia o novo ingrediente para o Flask salvar no banco.
+  await fetch('/api/despensa', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({
+      nome:nome,
+      quantidade:quantidade,
+      unidade:unidade,
+      categoria:info.categoria,
+      emoji:info.emoji
+    })
   });
-
-  salvarLocalStorage();
 
   fecharModal();
 
-  renderizar();
+  // ALTERADO: depois de salvar, busca a lista atualizada do banco.
+  await carregarIngredientes();
 
 });
 
@@ -495,5 +399,5 @@ function fecharModal(){
 
 }
 
-// Primeira renderizacao ao carregar a pagina.
-renderizar();
+// ALTERADO: primeira renderizacao agora busca do banco.
+carregarIngredientes();

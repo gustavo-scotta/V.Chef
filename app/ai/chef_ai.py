@@ -80,10 +80,10 @@ def gerar_resposta(mensagem, ingredientes=None, preferencias=None):
 
         for item in ingredientes:
 
-            nome = item[0]
-            quantidade = item[1]
-            categoria = item[2]
-            unidade = item[3]
+            nome = item[1]
+            quantidade = item[2]
+            categoria = item[3]
+            unidade = item[4]
 
             ingredientes_texto.append(
                 f"{nome} - {quantidade} {unidade} ({categoria})"
@@ -161,12 +161,6 @@ def gerar_resposta(mensagem, ingredientes=None, preferencias=None):
 
             return [
                 {
-                    "titulo": "Erro ao gerar receita",
-                    "descricao": "A IA retornou JSON invalido.",
-                    "tempo": "0 min",
-                    "dificuldade": "Erro",
-                    "modo_preparo": [
-                        str(primeiro_erro)
-                    ]
+                    "titulo": "Erro ao gerar receita"
                 }
             ]
