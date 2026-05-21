@@ -1,0 +1,95 @@
+[
+{
+"categoria": "Prato Principal",
+"descricao": "Um clássico italiano simples e saboroso, perfeito para uma refeição rápida e reconfortante.",
+"dica_chef": "Use um bom azeite extra virgem para realçar o sabor e não deixe o alho queimar, apenas dourar.",
+"dificuldade": "Fácil",
+"id": "1",
+"imagem": "spaghetti aglio olio",
+"ingredientes": [
+"200g de spaghetti",
+"4 dentes de alho fatiados",
+"60ml de azeite extra virgem",
+"1 pimenta dedo-de-moça picada (opcional)",
+"Salsinha fresca picada a gosto",
+"Sal a gosto"
+],
+"modo_preparo": [
+"Cozinhe o spaghetti em água salgada até ficar al dente.",
+"Enquanto isso, aqueça o azeite em uma frigideira e refogue o alho e a pimenta até dourarem levemente.",
+"Escorra a massa, reservando um pouco da água do cozimento, e adicione-a à frigideira com o alho.",
+"Misture bem, adicione a salsinha e um pouco da água da massa se necessário para emulsionar."
+],
+"rendimento": "2 porções",
+"tags": [
+"Massa",
+"Rápido",
+"Vegetariano"
+],
+"tempo": "20 min",
+"titulo": "Spaghetti Aglio e Olio"
+},
+{
+"categoria": "Entrada",
+"descricao": "Um aperitivo italiano fresco e vibrante, ideal para começar qualquer refeição com leveza.",
+"dica_chef": "Utilize tomates maduros e de boa qualidade para o melhor sabor e não economize no azeite.",
+"dificuldade": "Fácil",
+"id": "2",
+"imagem": "bruschetta pomodoro",
+"ingredientes": [
+"4 fatias de pão italiano rústico",
+"2 tomates maduros picados",
+"1 dente de alho",
+"Folhas de manjericão fresco",
+"Azeite extra virgem a gosto",
+"Sal e pimenta do reino a gosto"
+],
+"modo_preparo": [
+"Toste as fatias de pão em uma chapa ou forno até ficarem crocantes.",
+"Esfregue o dente de alho cortado sobre cada fatia de pão tostado.",
+"Em uma tigela, misture os tomates picados, manjericão, azeite, sal e pimenta.",
+"Distribua a mistura de tomate sobre as fatias de pão e sirva imediatamente."
+],
+"rendimento": "4 porções",
+"tags": [
+"Aperitivo",
+"Rápido",
+"Vegetariano"
+],
+"tempo": "15 min",
+"titulo": "Bruschetta al Pomodoro"
+},
+{
+"categoria": "Sobremesa",
+"descricao": "Uma sobremesa italiana elegante e cremosa, com a acidez das frutas vermelhas para equilibrar.",
+"dica_chef": "Para desenformar facilmente, mergulhe rapidamente o fundo do ramequim em água quente antes de virar no prato.",
+"dificuldade": "Fácil",
+"id": "3",
+"imagem": "panna cotta frutas vermelhas",
+"ingredientes": [
+"500ml de creme de leite fresco",
+"80g de açúcar",
+"1 colher de chá de extrato de baunilha",
+"1 envelope (12g) de gelatina em pó sem sabor",
+"50ml de água fria",
+"1 xícara de frutas vermelhas mistas",
+"2 colheres de sopa de açúcar para a calda"
+],
+"modo_preparo": [
+"Hidrate a gelatina na água fria e reserve.",
+"Em uma panela, aqueça o creme de leite, açúcar e baunilha até quase ferver, sem deixar ferver.",
+"Retire do fogo, adicione a gelatina hidratada e mexa até dissolver completamente.",
+"Despeje a mistura em ramequins individuais e leve à geladeira por no mínimo 2 horas, ou até firmar.",
+"Para a calda, cozinhe as frutas vermelhas com o açúcar em fogo baixo por 5 minutos.",
+"Desenforme a panna cotta e sirva com a calda de frutas vermelhas."
+],
+"rendimento": "4 porções",
+"tags": [
+"Sobremesa",
+"Doce",
+"Cremoso"
+],
+"tempo": "20 min + 2h refrigeração",
+"titulo": "Panna Cotta com Calda de Frutas Vermelhas"
+}
+]

@@ -1,14 +1,54 @@
 .container-home {
-    width: 200px;
-    background-color: #D4CCC0;;
-    border-radius: 5px;
-    padding: 20px;
-    margin: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-};
+  width: 200px;
+  background-color: #d4ccc0;
+  border-radius: 5px;
+  padding: 20px;
+  margin: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
 .titulo {
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-};
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/*CARD JS/HTML */
+#resposta-ia {
+  margin-top: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.card-receita {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.receita-titulo {
+  color: green;
+}
+
+.receita-descricao {
+  color: #444;
+}
+
+.receita-info {
+  display: flex;
+  gap: 10px;
+}
+
+.receita-info span {
+  background: #eee;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.receita-subtitulo {
+  margin-top: 16px;
+}
+
+.receita-lista li {
+  margin-bottom: 6px;
+}

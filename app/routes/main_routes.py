@@ -20,19 +20,22 @@ def home():
 
 @main.route("/mensagem", methods=["POST"])
 def mensagem():
+    try:
+        dados = request.get_json()
+        texto = dados["mensagem"]
 
-    dados = request.get_json()
-    texto = dados["mensagem"]
+        resposta = gerar_resposta(
+            texto,
+            ingredientes=None,
+            preferencias=preferencias_usuario
+        )
 
-    resposta = gerar_resposta(
-        texto,
-        ingredientes=None,
-        preferencias=preferencias_usuario
-    )
-
-    return jsonify({
-        "resposta": resposta
-    })
+        return jsonify({
+            "resposta": resposta
+        })
+    except Exception as e:
+        print("Erro:", e)
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
 
 @main.route("/despensa")
 def despensa():
