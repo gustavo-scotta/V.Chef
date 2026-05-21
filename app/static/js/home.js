@@ -37,7 +37,6 @@ async function enviarMensagem() {
       }),
     });
 
-
     if (!resposta.ok) {
       areaResposta.innerText = "Erro ao buscar resposta da IA";
       return;
@@ -60,7 +59,12 @@ function mostrarCards(areaResposta) {
     .map((receita, index) => {
       if (receita.titulo === "Erro ao gerar receita") {
         return `
-          <div class="card-receita card-erro">
+          <div class="card-receita">
+            <img
+            class="imagem-erro"
+            src="/static/img/food-placeholder.jpg"
+            alt="Imagem da receita"
+          >
             <h3 class="receita-titulo">Erro ao gerar receita</h3>
           </div>
         `;
@@ -70,7 +74,7 @@ function mostrarCards(areaResposta) {
         <div class="card-receita" onclick="abrirReceita(${index})">
           <img
             class="receita-imagem"
-            src="/static/img/food-placeholder.jpg"
+            src="/static/img/200.jpg"
             alt="Imagem da receita"
           >
 
@@ -88,7 +92,6 @@ function mostrarCards(areaResposta) {
     .join("");
 }
 
-
 function abrirReceita(index) {
   const areaResposta = document.getElementById("resposta-ia");
 
@@ -105,24 +108,25 @@ function abrirReceita(index) {
       <p>${receita.descricao}</p>
 
       <div class="receita-info">
-        <span>${receita.tempo}</span>
-        <span>${receita.dificuldade}</span>
-        <span>${receita.rendimento}</span>
+        <p>⏱️ ${receita.tempo}</p>
+        <p>😵 ${receita.dificuldade}</p>
+        <p>⭐ ${receita.rendimento}</p>
       </div>
 
-      <h4>Ingredientes</h4>
-      <ul>
-        ${receita.ingredientes.map((item) => `<li>${item}</li>`).join("")}
-      </ul>
+      <div class="receita-ingredientes">
+        <h4>Ingredientes</h4>
+        <ul>
+          ${receita.ingredientes.map((item) => `<li>${item}</li>`).join("")}
+        </ul>
 
-      <h4>Modo de preparo</h4>
-      <ol>
-        ${receita.modo_preparo.map((passo) => `<li>${passo}</li>`).join("")}
-      </ol>
+        <h4>Modo de preparo</h4>
+        <ol>
+          ${receita.modo_preparo.map((passo) => `<li>${passo}</li>`).join("")}
+        </ol>
+      </div>
     </div>
   `;
 }
-
 
 function voltarCards() {
   const areaResposta = document.getElementById("resposta-ia");

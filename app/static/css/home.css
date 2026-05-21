@@ -53,7 +53,9 @@
   min-height: 150px;
   box-shadow: 8px 8px 18px rgba(0, 0, 0, 0.18);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .card-receita:hover {
@@ -87,6 +89,10 @@
   transform: none;
 }
 
+.receita-ingredientes {
+  padding-left: 20px;
+}
+
 .botao-voltar {
   border: 0;
   background: #5b4d27;
@@ -98,7 +104,8 @@
 }
 
 /* Imagem do card */
-.receita-imagem {
+.receita-imagem,
+.imagem-erro {
   width: 100%;
   height: 220px;
   object-fit: cover;
