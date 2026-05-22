@@ -1,4 +1,70 @@
-/* Preferencias: estilos exclusivos das secoes, tags, toggles e toast. */
+:root{
+  --bg:#EADED2;
+  --main:#FBF1E7;
+  --olive:#716942;
+  --olive-light:#96874D;
+  --text:#625A34;
+  --muted:#A9A085;
+  --border:#F6DBBE;
+  --white:#FFFDF9;
+}
+
+body{
+  background:var(--bg);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  padding:25px;
+  color:var(--text);
+}
+
+.container{
+  max-width:1350px;
+  margin:auto;
+  background:var(--main);
+  border-radius:35px;
+  padding:30px;
+  min-height:95vh;
+}
+
+/* HEADER */
+.topo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:35px;
+}
+
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.logo-img{
+  width:60px;
+  height:60px;
+  object-fit:contain;
+}
+
+.logo{
+  font-size:34px;
+  font-weight:bold;
+  color:var(--text);
+}
+
+.perfil{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  border:1px solid var(--border);
+  background:var(--main);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  color:var(--text);
+}
+
+/* SECTIONS */
 .section{
   margin-bottom:35px;
 }
@@ -10,7 +76,7 @@
   font-weight:bold;
 }
 
-/* Tags adicionadas pelo usuario para alimentos que nao gosta. */
+/* TAGS */
 .tags-container{
   display:flex;
   flex-wrap:wrap;
@@ -34,11 +100,20 @@
   border:none;
   background:none;
   cursor:pointer;
-  color:var(--danger);
+  color:#9D5A35;
   font-size:20px;
 }
 
-/* Campo de texto e botao usados para criar novas preferencias. */
+.tag-remove-slider{
+  border:none;
+  background:none;
+  cursor:pointer;
+  color:#9D5A35;
+  font-size:20px;
+  padding:0;
+}
+
+/* INPUT + BUTTON */
 .pesquisa-area{
   display:flex;
   gap:16px;
@@ -55,7 +130,7 @@
   font-size:18px;
   color:var(--text);
   outline:none;
-  font-family:inherit;
+  font-family: inherit;
 }
 
 .pesquisa::placeholder{
@@ -82,7 +157,7 @@
   transform:translateY(-2px);
 }
 
-/* Grade de restricoes e observacoes com chave liga/desliga. */
+/* GRID + CARD */
 .toggle-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -98,16 +173,18 @@
   display:flex;
   justify-content:space-between;
   align-items:center;
-  box-shadow:var(--shadow);
+  gap:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.03);
 }
 
 .toggle-label{
   font-size:18px;
   font-weight:bold;
   color:var(--text);
+  margin-right:auto;
 }
 
-/* Switch visual usado em cada restricao/observacao. */
+/* SWITCH */
 .toggle-switch{
   position:relative;
   width:52px;
@@ -121,9 +198,10 @@
 .slider{
   position:absolute;
   inset:0;
-  background:var(--switch);
+  background:#D4CCC0;
   border-radius:999px;
   transition:.2s;
+  cursor:pointer;
 }
 
 .slider::before{
@@ -146,7 +224,7 @@
   transform:translateX(24px);
 }
 
-/* Feedback exibido quando o usuario salva as preferencias. */
+/* TOAST */
 .toast{
   position:fixed;
   bottom:24px;
@@ -165,7 +243,9 @@
   opacity:1;
 }
 
+/* RESPONSIVO */
 @media(max-width:900px){
+
   .toggle-grid{
     grid-template-columns:1fr;
   }
@@ -177,6 +257,7 @@
   .btn-add,
   .save-btn{
     width:100%;
-    min-height:52px;
+    height:52px;
   }
+
 }

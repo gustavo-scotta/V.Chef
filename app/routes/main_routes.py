@@ -111,3 +111,68 @@ def preferencias():
     return render_template(
         "preferencias.html"
     )
+
+@main.route('/preferencias/nao-gosta', methods=['POST'])
+def adicionar_nao_gosta():
+    dados = request.get_json()
+
+    nome = dados.get('nome', '').strip()
+
+    if not nome:
+        return jsonify({'erro': 'Ingrediente inválido'}), 400
+
+    id_ingrediente = banco.cadastra_nao_gosta(nome)
+
+    return jsonify({
+        'id': id_ingrediente,
+        'nome': nome
+    }), 201
+
+@main.route('/preferencias/nao-gosta/<int:id_ingrediente>', methods=['DELETE'])
+def remover_nao_gosta(id_ingrediente):
+
+    banco.remove_nao_gosta(id_ingrediente)
+
+    return jsonify({
+        'status': 'ok'
+    })
+
+@main.route('/preferencias/restricao', methods=['POST'])
+def adicionar_restricao():
+    dados = request.get_json()
+
+    nome = dados.get('nome', '').strip()
+
+    if not nome:
+        return jsonify({'erro': 'Restrição inválida'}), 400
+
+    id_restricao = banco.cadastra_restricao(nome, True)
+
+    return jsonify({
+        'id': id_restricao,
+        'nome': nome,
+        'status': True
+    }), 201
+
+@main.route('/preferencias/restricao/status', methods=['POST'])
+def alterar_status_restricao():
+
+    dados = request.get_json()
+
+    id_restricao = dados.get('id')
+    status = dados.get('status')
+
+    banco.altera_status_restricao(id_restricao, status)
+
+    return jsonify({
+        'id': id_restricao,
+        'status': status
+    })
+
+@main.route('/preferencias/restricao/<int:id_restricao>', methods=['DELETE'])
+def remover_restricao(id_restricao):
+    banco.remove_restricao(id_restricao)
+
+    return jsonify({
+        'status': 'ok'
+    })

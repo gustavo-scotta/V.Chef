@@ -1,80 +1,143 @@
-// Preferencias: script exclusivo da pagina preferencias.html.
+// NÃO GOSTA
+async function addTag(){
+    const input = document.getElementById('foodInput');
+    const value = input.value.trim();
 
-// Adiciona uma tag com alimento que o usuario nao gosta.
-function addTag(){
+    if(!value) return;
 
-  const input = document.getElementById('foodInput');
+    const response = await fetch('/preferencias/nao-gosta', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      body: JSON.stringify ({
+        nome: value
+      })
+    });
 
-  const value = input.value.trim();
+    const data = await response.json();
 
-  if(!value) return;
+    const container = document.getElementById('tags-container');
 
-  const container = document.getElementById('tags-container');
+    const tag = document.createElement('div');
 
-  const tag = document.createElement('div');
+    tag.className = 'tag';
 
-  tag.className = 'tag';
+    tag.innerHTML = `
+      ${data.nome}
 
-  tag.innerHTML = `
-    ${value}
-    <button class="tag-remove" onclick="removeTag(this)">
-      ×
-    </button>
-  `;
+      <button
+        class="tag-remove"
+        onclick="removerNaoGosta(this, ${data.id})"
+      >
+        ×
+      </button>
+    `;
 
-  container.appendChild(tag);
+    container.appendChild(tag);
 
-  input.value = '';
+    input.value = '';
 
-}
+  }
 
-// Remove a tag clicada pelo usuario.
-function removeTag(btn){
+async function removerNaoGosta(btn, id){
+    const response = await fetch(`/preferencias/nao-gosta/${id}`, {
+      method: 'DELETE'
+    });
 
-  btn.parentElement.remove();
+    if(!response.ok){
+      alert('Erro ao remover alimento');
+      return;
+    }
 
-}
+    btn.closest('.tag').remove();
 
-// Cria um card de restricao com switch liga/desliga.
-function addAllergy(){
+  }
 
-  const input = document.getElementById('allergyInput');
+// RESTRIÇÕES
+async function addAllergy(){
+    const input = document.getElementById('allergyInput');
 
-  const value = input.value.trim();
+    const value = input.value.trim();
 
-  if(!value) return;
+    if(!value) return;
 
-  const grid = document.getElementById('allergy-grid');
+    const response = await fetch('/preferencias/restricao', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      body: JSON.stringify ({
+        nome: value
+      })
+    });
 
-  const card = document.createElement('div');
+    const data = await response.json();
 
-  card.className = 'toggle-card';
+    const grid = document.getElementById('allergy-grid');
 
-  card.innerHTML = `
-  
-    <span class="toggle-label">${value}</span>
+    const card = document.createElement('div');
 
-    <label class="toggle-switch">
-      <input type="checkbox">
-      <span class="slider"></span>
-    </label>
+    card.className = 'toggle-card';
 
-  `;
+    card.innerHTML = `
 
-  grid.appendChild(card);
+      <span class="toggle-label">${data.nome}</span>
 
-  input.value = '';
+      <button class="tag-remove-slider" onclick="removerRestricao(this, ${data.id})">
+        ×
+      </button>
 
-}
+      <label class="toggle-switch">
 
-// Cria um card de observacao alimentar com switch liga/desliga.
-function addDiet(){
+        <input type="checkbox"
+        checked onchange="alterarStatusRestricao(${data.id}, this.checked)"
+        >
+        <span class="slider"></span>
+
+      </label>
+
+    `;
+
+    grid.appendChild(card);
+
+    input.value = '';
+
+  }
+
+async function removerRestricao(btn, id){
+    const response = await fetch(`/preferencias/restricao/${id}`, {
+      method: 'DELETE'
+    });
+
+    if(!response.ok){
+      alert('Erro ao remover restrição');
+      return;
+    }
+
+    btn.parentElement.remove();
+  }
+
+// OBSERVAÇÕES
+async function addDiet(){
 
   const input = document.getElementById('dietInput');
 
   const value = input.value.trim();
 
   if(!value) return;
+
+  const response = await fetch('/preferencias/observacoes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      body: JSON.stringify ({
+        nome: value
+      })
+    });
+
+  const data = await response.json();
 
   const grid = document.getElementById('diet-grid');
 
@@ -83,12 +146,19 @@ function addDiet(){
   card.className = 'toggle-card';
 
   card.innerHTML = `
-  
-    <span class="toggle-label">${value}</span>
+
+    <span class="toggle-label">${data.nome}</span>
+Parei aqui
+    <button class="tag-remove-slider" onclick="removeTag(this)"> 
+      ×
+    </button>
 
     <label class="toggle-switch">
+
       <input type="checkbox">
+
       <span class="slider"></span>
+
     </label>
 
   `;
@@ -99,7 +169,23 @@ function addDiet(){
 
 }
 
-// Exibe um toast simples confirmando a acao de salvar.
+// Alterar status do SLIDE
+async function alterarStatusRestricao(id, status){
+
+  await fetch('/preferencias/restricao/status', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      id: id,
+      status: status
+    })
+  });
+
+}
+
+// SAVE
 function savePrefs(){
 
   const toast = document.getElementById('toast');
@@ -113,16 +199,3 @@ function savePrefs(){
   }, 2500);
 
 }
-
-// Enter nos campos executa o mesmo comportamento dos botoes de adicionar.
-document.getElementById('foodInput').addEventListener('keydown', event => {
-  if(event.key === 'Enter') addTag();
-});
-
-document.getElementById('allergyInput').addEventListener('keydown', event => {
-  if(event.key === 'Enter') addAllergy();
-});
-
-document.getElementById('dietInput').addEventListener('keydown', event => {
-  if(event.key === 'Enter') addDiet();
-});

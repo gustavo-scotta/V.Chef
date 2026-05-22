@@ -60,6 +60,56 @@ class DB:
             )
         """)
 
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS nao_gosta (
+                id_usuario INTEGER NOT NULL,
+                id_ingrediente INTEGER NOT NULL,
+
+                PRIMARY KEY (id_usuario, id_ingrediente),
+            
+                FOREIGN KEY (id_usuario)
+                REFERENCES usuario(id),
+
+                FOREIGN KEY (id_ingrediente)
+                REFERENCES ingrediente(id)
+            )
+        """)
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS restricao (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome VARCHAR(50) NOT NULL UNIQUE
+            )
+        """)
+        
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS usuario_restricao (
+                id_usuario INTEGER NOT NULL,
+                id_restricao INTEGER NOT NULL,
+                status BOOLEAN NOT NULL DEFAULT(FALSE),
+
+                PRIMARY KEY(id_usuario, id_restricao),
+            
+                FOREIGN KEY (id_usuario)
+                REFERENCES usuario(id),
+
+                FOREIGN KEY (id_restricao)
+                REFERENCES restricao(id)
+            )
+        """)
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS observacao (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_usuario INTEGER NOT NULL,
+                nome VARCHAR(200) NOT NULL UNIQUE,
+                status BOOLEAN NOT NULL DEFAULT(FALSE),
+
+                FOREIGN KEY (id_usuario)
+                REFERENCES usuario(id)
+            )
+        """)
+
         self.connection.commit()
 
         # cria usuário padrão
@@ -240,5 +290,155 @@ class DB:
 
         self.connection.commit()
 
+    def cadastra_nao_gosta(self, nome_ingrediente):
+
+        cur = self.connection.cursor()
+
+        nome_ingrediente = nome_ingrediente.strip()
+
+        if not nome_ingrediente:
+            return None
+
+        cur.execute(
+            "SELECT id FROM ingrediente WHERE nome = ?",
+            (nome_ingrediente,)
+        )
+
+        ingrediente = cur.fetchone()
+
+        if ingrediente:
+            id_ingrediente = ingrediente[0]
+
+        else:
+            # cria categoria "Outros" se não existir
+            cur.execute(
+                "INSERT OR IGNORE INTO categoria_ingrediente (nome) VALUES (?)",
+                ("Outros",)
+            )
+
+            # busca id da categoria "Outros"
+            cur.execute(
+                "SELECT id FROM categoria_ingrediente WHERE nome = ?",
+                ("Outros",)
+            )
+
+            id_categoria = cur.fetchone()[0]
+
+            # cria ingrediente usando a categoria encontrada
+            cur.execute(
+                """
+                INSERT INTO ingrediente
+                (nome, id_categoria, unidade_medida, codigo_icone)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    nome_ingrediente,
+                    id_categoria,
+                    "un",
+                    ""
+                )
+            )
+
+            id_ingrediente = cur.lastrowid
+
+        # vincula ingrediente ao usuário em nao_gosta
+        cur.execute(
+            """
+            INSERT OR IGNORE INTO nao_gosta
+            (id_usuario, id_ingrediente)
+            VALUES (?, ?)
+            """,
+            (1, id_ingrediente)
+        )
+
+
+        self.connection.commit()
+
+        return id_ingrediente
+    
+    def remove_nao_gosta(self, id_ingrediente):
+
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            DELETE FROM nao_gosta
+            WHERE id_usuario = ? AND id_ingrediente = ?
+            """,
+            (1, id_ingrediente)
+        )
+
+        self.connection.commit()
+
+    def cadastra_restricao(self, nome_restricao, status=True):
+
+        cur = self.connection.cursor()
+
+        nome_restricao = nome_restricao.strip()
+
+        if not nome_restricao:
+            return None
+
+        cur.execute(
+            "SELECT id FROM restricao WHERE nome = ?",
+            (nome_restricao,)
+        )
+
+        restricao = cur.fetchone()
+
+        if restricao:
+            id_restricao = restricao[0]
+        else:
+            cur.execute(
+                "INSERT INTO restricao (nome) VALUES (?)",
+                (nome_restricao,)
+            )
+
+            id_restricao = cur.lastrowid
+
+        cur.execute(
+            """
+            INSERT OR REPLACE INTO usuario_restricao
+            (id_usuario, id_restricao, status)
+            VALUES (?, ?, ?)
+            """,
+            (1, id_restricao, status)
+        )
+
+        self.connection.commit()
+
+        return id_restricao
+    
+    
+    def altera_status_restricao(self, id_restricao, status):
+
+        cur = self.connection.cursor()
+
+        status_db = 1 if status else 0
+
+        cur.execute(
+            """
+            UPDATE usuario_restricao
+            SET status = ?
+            WHERE id_usuario = ? AND id_restricao = ?
+            """,
+            (status_db, 1, id_restricao)
+        )
+
+        self.connection.commit()
+
+    def remove_restricao(self, id_restricao):
+
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            DELETE FROM usuario_restricao
+            WHERE id_usuario = ? AND id_restricao = ?
+            """,
+            (1, id_restricao)
+        )
+
+        self.connection.commit()
 
 banco = DB()

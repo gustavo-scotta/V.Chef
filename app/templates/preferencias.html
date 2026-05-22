@@ -1,54 +1,196 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %}Preferências V.Chef{% endblock %} {% block
+page_css %}
+<!-- CSS exclusivo da preferencias: contem o chat e os cards de receita. -->
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/preferencias.css') }}"
+/>
+{% endblock %} {% block content %}
 
-{% block title %}Preferências - V.Chef{% endblock %}
-
-{% block page_css %}
-<!-- CSS exclusivo da pagina de Preferencias. -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/preferencias.css') }}">
-{% endblock %}
-
-{% block content %}
-
-<!-- Preferencias usa a navegacao da base; aqui fica apenas o conteudo proprio da tela. -->
+<!-- NÃO GOSTO -->
 <section class="section">
+
   <h2 class="section-title">Alimentos que não gosto</h2>
+
   <div class="tags-container" id="tags-container"></div>
+
   <div class="pesquisa-area">
-    <input type="text" id="foodInput" class="pesquisa" placeholder="Adicionar alimento">
-    <button class="btn-add" type="button" onclick="addTag()">+ Adicionar</button>
+
+    <input
+      type="text"
+      id="foodInput"
+      class="pesquisa"
+      placeholder="Adicionar alimento"
+      onkeydown="if(event.key==='Enter') addTag()"
+    >
+
+    <button class="btn-add" onclick="addTag()">
+      + Adicionar
+    </button>
+
   </div>
+
 </section>
 
-<!-- Restricoes: cards com chave liga/desliga para marcar alergias ou limitacoes. -->
+<!-- RESTRIÇÕES -->
 <section class="section">
+
   <h2 class="section-title">Restrições</h2>
-  <div class="toggle-grid" id="allergy-grid"></div>
-  <div class="pesquisa-area">
-    <input type="text" id="allergyInput" class="pesquisa" placeholder="Adicionar restrição">
-    <button class="btn-add" type="button" onclick="addAllergy()">+ Adicionar</button>
+
+  <div class="toggle-grid" id="allergy-grid">
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Lactose</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Glúten</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Amendoim</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Frutos do mar</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
   </div>
+
+  <div class="pesquisa-area">
+
+    <input
+      type="text"
+      id="allergyInput"
+      class="pesquisa"
+      placeholder="Adicionar restrição"
+      onkeydown="if(event.key==='Enter') addAllergy()"
+    >
+
+    <button class="btn-add" onclick="addAllergy()">
+      + Adicionar
+    </button>
+
+  </div>
+
 </section>
 
-<!-- Observacoes: preferencias livres que ajudam a IA a personalizar receitas. -->
+<!-- OBSERVAÇÕES -->
 <section class="section">
+
   <h2 class="section-title">Observações</h2>
-  <div class="toggle-grid" id="diet-grid"></div>
-  <div class="pesquisa-area">
-    <input type="text" id="dietInput" class="pesquisa" placeholder="Adicionar observação">
-    <button class="btn-add" type="button" onclick="addDiet()">+ Adicionar</button>
+
+  <div class="toggle-grid" id="diet-grid">
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Vegetariano</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Vegano</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Low carb</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+    <div class="toggle-card">
+
+      <span class="toggle-label">Sem açúcar</span>
+
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
   </div>
+
+  <div class="pesquisa-area">
+
+    <input
+      type="text"
+      id="dietInput"
+      class="pesquisa"
+      placeholder="Adicionar observação"
+      onkeydown="if(event.key==='Enter') addDiet()"
+    >
+
+    <button class="btn-add" onclick="addDiet()">
+      + Adicionar
+    </button>
+
+  </div>
+
 </section>
 
-<!-- Acoes da pagina: mostra feedback visual ao salvar as preferencias locais. -->
+<!-- SAVE -->
 <div class="acoes">
-  <button class="acao-btn save-btn" type="button" onclick="savePrefs()">Salvar Preferências</button>
+
+  <button class="acao-btn save-btn" onclick="savePrefs()">
+    Salvar Preferências
+  </button>
+
 </div>
 
-<div class="toast" id="toast">Preferências salvas!</div>
+</div>
 
-{% endblock %}
+<!-- TOAST -->
+<div class="toast" id="toast">
+✓ Preferências salvas!
+</div>
 
-{% block page_js %}
-<!-- JS exclusivo da pagina de Preferencias. -->
+{% endblock %} {% block page_js %}
+<!-- JS exclusivo da Home: controla envio de mensagens e renderizacao das respostas. -->
 <script src="{{ url_for('static', filename='js/preferencias.js') }}"></script>
 {% endblock %}
