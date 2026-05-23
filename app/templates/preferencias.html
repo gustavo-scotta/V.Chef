@@ -12,7 +12,23 @@ page_css %}
 
   <h2 class="section-title">Alimentos que não gosto</h2>
 
-  <div class="tags-container" id="tags-container"></div>
+  <div class="tags-container" id="tags-container">
+
+    {% for item in nao_gosta %}
+      <div class="tag">
+        {{ item.nome }}
+
+        <button
+          class="tag-remove"
+          data-id="{{ item.id }}"
+          onclick="removerNaoGosta(this, this.dataset.id)"
+        >
+          ×
+        </button>
+      </div>
+    {% endfor %}
+
+  </div>
 
   <div class="pesquisa-area">
 
@@ -21,6 +37,7 @@ page_css %}
       id="foodInput"
       class="pesquisa"
       placeholder="Adicionar alimento"
+      oninput="somenteLetras(this)"
       onkeydown="if(event.key==='Enter') addTag()"
     >
 
@@ -39,49 +56,34 @@ page_css %}
 
   <div class="toggle-grid" id="allergy-grid">
 
-    <div class="toggle-card">
+    {% for restricao in restricoes %}
+      <div class="toggle-card">
 
-      <span class="toggle-label">Lactose</span>
+        <span class="toggle-label">{{ restricao.nome }}</span>
 
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
+        {% if not restricao.padrao %}
+          <button
+            class="tag-remove-slider"
+            data-id="{{ restricao.id }}"
+            onclick="removerRestricao(this, this.dataset.id)"
+          >
+            ×
+          </button>
+        {% endif %}
 
-    </div>
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            data-id="{{ restricao.id }}"
+            oninput="somenteLetras(this)"
+            {% if restricao.status %}checked{% endif %}
+            onchange="alterarStatusRestricao(this.dataset.id, this.checked)"
+          >
+          <span class="slider"></span>
+        </label>
 
-    <div class="toggle-card">
-
-      <span class="toggle-label">Glúten</span>
-
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
-
-    </div>
-
-    <div class="toggle-card">
-
-      <span class="toggle-label">Amendoim</span>
-
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
-
-    </div>
-
-    <div class="toggle-card">
-
-      <span class="toggle-label">Frutos do mar</span>
-
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
-
-    </div>
+      </div>
+    {% endfor %}
 
   </div>
 
@@ -92,6 +94,7 @@ page_css %}
       id="allergyInput"
       class="pesquisa"
       placeholder="Adicionar restrição"
+      oninput="somenteLetras(this)"
       onkeydown="if(event.key==='Enter') addAllergy()"
     >
 
@@ -110,49 +113,34 @@ page_css %}
 
   <div class="toggle-grid" id="diet-grid">
 
-    <div class="toggle-card">
+    {% for observacao in observacoes %}
+      <div class="toggle-card">
 
-      <span class="toggle-label">Vegetariano</span>
+        <span class="toggle-label">{{ observacao.nome }}</span>
 
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
+        {% if not observacao.padrao %}
+          <button
+            class="tag-remove-slider"
+            data-id="{{ observacao.id }}"
+            onclick="removerObservacao(this, this.dataset.id)"
+          >
+            ×
+          </button>
+        {% endif %}
 
-    </div>
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            data-id="{{ observacao.id }}"
+            oninput="somenteLetras(this)"
+            {% if observacao.status %}checked{% endif %}
+            onchange="alterarStatusObservacao(this.dataset.id, this.checked)"
+          >
+          <span class="slider"></span>
+        </label>
 
-    <div class="toggle-card">
-
-      <span class="toggle-label">Vegano</span>
-
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
-
-    </div>
-
-    <div class="toggle-card">
-
-      <span class="toggle-label">Low carb</span>
-
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
-
-    </div>
-
-    <div class="toggle-card">
-
-      <span class="toggle-label">Sem açúcar</span>
-
-      <label class="toggle-switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
-
-    </div>
+      </div>
+    {% endfor %}
 
   </div>
 
@@ -163,6 +151,7 @@ page_css %}
       id="dietInput"
       class="pesquisa"
       placeholder="Adicionar observação"
+      oninput="somenteLetras(this)"
       onkeydown="if(event.key==='Enter') addDiet()"
     >
 

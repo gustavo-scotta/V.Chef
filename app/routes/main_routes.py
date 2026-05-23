@@ -4,13 +4,7 @@ from app.database import banco
 
 main = Blueprint("main", __name__)
 
-preferencias_usuario = [
-    "Comida italiana",
-    "Receitas rápidas",
-    "Sobremesas"
-]
-
-""" ROTAS HOME/IA"""
+""" ROTAS HOME"""
 @main.route("/")
 def home():
 
@@ -29,11 +23,17 @@ def mensagem():
         # Busca os ingredientes salvos na despensa
         ingredientes_despensa = banco.obtem_ingredientes_despensa()
 
+        # Busca preferencias true
+        preferencias_usuario = banco.obtem_preferencias_ativas()
+
+        nao_gosta = [item["nome"] for item in banco.lista_nao_gosta()]
+
         # IA recebe os ingredientes da despensa
         resposta = gerar_resposta(
             texto,
             ingredientes=ingredientes_despensa,
-            preferencias=preferencias_usuario
+            preferencias=preferencias_usuario,
+            nao_gosta=nao_gosta
         )
 
         return jsonify({
@@ -43,6 +43,9 @@ def mensagem():
     except Exception as e:
         print("Erro:", e)
         return jsonify({"status": "erro", "mensagem": str(e)}), 500
+
+
+
 
 """ ROTAS DESPENSA """
 @main.route("/despensa")
@@ -105,13 +108,26 @@ def diminuir_despensa(id):
         "status": "ok"
     })
 
+
+
+
 """ ROTAS PREFERENCIAS """
 @main.route("/preferencias")
 def preferencias():
+    banco.cadastra_preferencias_padrao()
+
+    restricoes = banco.lista_restricoes()
+    observacoes = banco.lista_observacoes()
+    nao_gosta = banco.lista_nao_gosta()
+
     return render_template(
-        "preferencias.html"
+        "preferencias.html",
+        restricoes=restricoes,
+        observacoes=observacoes,
+        nao_gosta=nao_gosta
     )
 
+"""Não gosta"""
 @main.route('/preferencias/nao-gosta', methods=['POST'])
 def adicionar_nao_gosta():
     dados = request.get_json()
@@ -137,6 +153,7 @@ def remover_nao_gosta(id_ingrediente):
         'status': 'ok'
     })
 
+"""Restrição"""
 @main.route('/preferencias/restricao', methods=['POST'])
 def adicionar_restricao():
     dados = request.get_json()
@@ -154,6 +171,14 @@ def adicionar_restricao():
         'status': True
     }), 201
 
+@main.route('/preferencias/restricao/<int:id_restricao>', methods=['DELETE'])
+def remover_restricao(id_restricao):
+    banco.remove_restricao(id_restricao)
+
+    return jsonify({
+        'status': 'ok'
+    })
+
 @main.route('/preferencias/restricao/status', methods=['POST'])
 def alterar_status_restricao():
 
@@ -169,10 +194,44 @@ def alterar_status_restricao():
         'status': status
     })
 
-@main.route('/preferencias/restricao/<int:id_restricao>', methods=['DELETE'])
-def remover_restricao(id_restricao):
-    banco.remove_restricao(id_restricao)
+"""Observações"""
+@main.route('/preferencias/observacoes', methods=['POST'])
+def adicionar_observacao():
+    dados = request.get_json()
+
+    nome = dados.get('nome', '').strip()
+
+    if not nome:
+        return jsonify({'erro': 'Observação Invalida'}), 400
+    
+    id_observacao = banco.cadastra_observacao(nome, True)
+
+    return jsonify({
+        'id': id_observacao,
+        'nome': nome,
+        'status': True
+    }), 201
+
+@main.route('/preferencias/observacoes/<int:id_observacao>', methods=['DELETE'])
+def remove_observacao(id_observacao):
+    banco.remove_observacao(id_observacao)
 
     return jsonify({
         'status': 'ok'
+    })
+
+@main.route('/preferencias/observacoes/status', methods=['POST'])
+def alterar_status_observacao():
+    dados = request.get_json()
+
+    id_observacao = dados.get('id')
+
+    status = dados.get('status')
+    
+
+    banco.altera_status_observacao(id_observacao, status)
+
+    return jsonify({
+        'id': id_observacao,
+        'status': status
     })

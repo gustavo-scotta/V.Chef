@@ -1,29 +1,29 @@
 // NÃO GOSTA
-async function addTag(){
-    const input = document.getElementById('foodInput');
-    const value = input.value.trim();
+async function addTag() {
+  const input = document.getElementById("foodInput");
+  const value = input.value.trim();
 
-    if(!value) return;
+  if (!value) return;
 
-    const response = await fetch('/preferencias/nao-gosta', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }, 
-      body: JSON.stringify ({
-        nome: value
-      })
-    });
+  const response = await fetch("/preferencias/nao-gosta", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      nome: value,
+    }),
+  });
 
-    const data = await response.json();
+  const data = await response.json();
 
-    const container = document.getElementById('tags-container');
+  const container = document.getElementById("tags-container");
 
-    const tag = document.createElement('div');
+  const tag = document.createElement("div");
 
-    tag.className = 'tag';
+  tag.className = "tag";
 
-    tag.innerHTML = `
+  tag.innerHTML = `
       ${data.nome}
 
       <button
@@ -34,53 +34,51 @@ async function addTag(){
       </button>
     `;
 
-    container.appendChild(tag);
+  container.appendChild(tag);
 
-    input.value = '';
+  input.value = "";
+}
 
+async function removerNaoGosta(btn, id) {
+  const response = await fetch(`/preferencias/nao-gosta/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    alert("Erro ao remover alimento");
+    return;
   }
 
-async function removerNaoGosta(btn, id){
-    const response = await fetch(`/preferencias/nao-gosta/${id}`, {
-      method: 'DELETE'
-    });
-
-    if(!response.ok){
-      alert('Erro ao remover alimento');
-      return;
-    }
-
-    btn.closest('.tag').remove();
-
-  }
+  btn.closest(".tag").remove();
+}
 
 // RESTRIÇÕES
-async function addAllergy(){
-    const input = document.getElementById('allergyInput');
+async function addAllergy() {
+  const input = document.getElementById("allergyInput");
 
-    const value = input.value.trim();
+  const value = input.value.trim();
 
-    if(!value) return;
+  if (!value) return;
 
-    const response = await fetch('/preferencias/restricao', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }, 
-      body: JSON.stringify ({
-        nome: value
-      })
-    });
+  const response = await fetch("/preferencias/restricao", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      nome: value,
+    }),
+  });
 
-    const data = await response.json();
+  const data = await response.json();
 
-    const grid = document.getElementById('allergy-grid');
+  const grid = document.getElementById("allergy-grid");
 
-    const card = document.createElement('div');
+  const card = document.createElement("div");
 
-    card.className = 'toggle-card';
+  card.className = "toggle-card";
 
-    card.innerHTML = `
+  card.innerHTML = `
 
       <span class="toggle-label">${data.nome}</span>
 
@@ -99,63 +97,62 @@ async function addAllergy(){
 
     `;
 
-    grid.appendChild(card);
+  grid.appendChild(card);
 
-    input.value = '';
+  input.value = "";
+}
 
+async function removerRestricao(btn, id) {
+  const response = await fetch(`/preferencias/restricao/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    alert("Erro ao remover restrição");
+    return;
   }
 
-async function removerRestricao(btn, id){
-    const response = await fetch(`/preferencias/restricao/${id}`, {
-      method: 'DELETE'
-    });
-
-    if(!response.ok){
-      alert('Erro ao remover restrição');
-      return;
-    }
-
-    btn.parentElement.remove();
-  }
+  btn.parentElement.remove();
+}
 
 // OBSERVAÇÕES
-async function addDiet(){
-
-  const input = document.getElementById('dietInput');
+async function addDiet() {
+  const input = document.getElementById("dietInput");
 
   const value = input.value.trim();
 
-  if(!value) return;
+  if (!value) return;
 
-  const response = await fetch('/preferencias/observacoes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }, 
-      body: JSON.stringify ({
-        nome: value
-      })
-    });
+  const response = await fetch("/preferencias/observacoes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      nome: value,
+    }),
+  });
 
   const data = await response.json();
 
-  const grid = document.getElementById('diet-grid');
+  const grid = document.getElementById("diet-grid");
 
-  const card = document.createElement('div');
+  const card = document.createElement("div");
 
-  card.className = 'toggle-card';
+  card.className = "toggle-card";
 
   card.innerHTML = `
 
     <span class="toggle-label">${data.nome}</span>
-Parei aqui
-    <button class="tag-remove-slider" onclick="removeTag(this)"> 
+    <button class="tag-remove-slider" onclick="removerObservacao(this, ${data.id})">
       ×
     </button>
 
     <label class="toggle-switch">
-
-      <input type="checkbox">
+      
+      <input type="checkbox"
+      checked 
+      onchange="alterarStatusObservacao(${data.id}, this.checked)">
 
       <span class="slider"></span>
 
@@ -165,37 +162,60 @@ Parei aqui
 
   grid.appendChild(card);
 
-  input.value = '';
+  input.value = "";
+}
 
+async function removerObservacao(btn, id) {
+  const response = await fetch(`/preferencias/observacoes/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    alert("Erro ao remover restrição");
+    return;
+  }
+
+  btn.parentElement.remove();
 }
 
 // Alterar status do SLIDE
-async function alterarStatusRestricao(id, status){
-
-  await fetch('/preferencias/restricao/status', {
-    method: 'POST',
+async function alterarStatusRestricao(id, status) {
+  await fetch("/preferencias/restricao/status", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id: id,
-      status: status
-    })
+      id: Number(id),
+      status: status,
+    }),
   });
+}
 
+async function alterarStatusObservacao(id, status) {
+  await fetch("/preferencias/observacoes/status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: Number(id),
+      status: status,
+    }),
+  });
 }
 
 // SAVE
-function savePrefs(){
+function savePrefs() {
+  const toast = document.getElementById("toast");
 
-  const toast = document.getElementById('toast');
-
-  toast.classList.add('show');
+  toast.classList.add("show");
 
   setTimeout(() => {
-
-    toast.classList.remove('show');
-
+    toast.classList.remove("show");
   }, 2500);
+}
 
+function somenteLetras(input) {
+  input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
 }

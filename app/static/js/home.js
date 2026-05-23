@@ -55,6 +55,24 @@ async function enviarMensagem() {
 
 // Mstra os cards pequenos
 function mostrarCards(areaResposta) {
+  if (receitas.length === 1 && receitas[0].categoria === "Aviso") {
+    areaResposta.innerHTML = `
+      <div class="card-receita">
+        <img
+          class="imagem-erro"
+          src="/static/img/food-placeholder.jpg"
+          alt="Aviso"
+        >
+
+        <h3 class="receita-titulo">${receitas[0].titulo}</h3>
+
+        <p>${receitas[0].descricao}</p>
+      </div>
+    `;
+
+    return;
+  }
+
   areaResposta.innerHTML = receitas
     .map((receita, index) => {
       if (receita.titulo === "Erro ao gerar receita") {

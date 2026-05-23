@@ -78,7 +78,8 @@ class DB:
         cur.execute("""
             CREATE TABLE IF NOT EXISTS restricao (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome VARCHAR(50) NOT NULL UNIQUE
+                nome VARCHAR(50) NOT NULL UNIQUE,
+                padrao BOOLEAN NOT NULL DEFAULT(FALSE)
             )
         """)
         
@@ -102,9 +103,12 @@ class DB:
             CREATE TABLE IF NOT EXISTS observacao (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 id_usuario INTEGER NOT NULL,
-                nome VARCHAR(200) NOT NULL UNIQUE,
+                nome VARCHAR(200) NOT NULL,
                 status BOOLEAN NOT NULL DEFAULT(FALSE),
+                padrao BOOLEAN NOT NULL DEFAULT(FALSE),
 
+                UNIQUE(id_usuario, nome),
+                    
                 FOREIGN KEY (id_usuario)
                 REFERENCES usuario(id)
             )
@@ -115,13 +119,17 @@ class DB:
         # cria usuário padrão
         cur.execute("SELECT id FROM usuario WHERE id = 1")
 
-        if not cur.fetchone():
-            cur.execute(
-                "INSERT INTO usuario (nome) VALUES (?)",
-                ("Fabio",)
+        cur.execute(
+                """
+                INSERT OR IGNORE INTO usuario (id, nome)
+                VALUES (?, ?)
+                """,
+                (1, "Fabio")
             )
 
         self.connection.commit()
+
+        self.cadastra_preferencias_padrao()
 
     def cadastra_ingrediente_na_despensa(
         self,
@@ -239,7 +247,48 @@ class DB:
 
         return cur.fetchall()
 
-    # ALTERADO: novo método para aumentar a quantidade de um ingrediente na despensa.
+
+    ####################################
+    ##########
+    ########## ALTERADO
+    ###################################
+
+    def obtem_preferencias_ativas(self):
+        cur = self.connection.cursor()
+
+        preferencias = []
+
+        cur.execute(
+            """
+            SELECT r.nome
+            FROM restricao r
+            INNER JOIN usuario_restricao ur
+                ON ur.id_restricao = r.id
+            WHERE ur.id_usuario = ?
+            AND ur.status = 1
+            ORDER BY r.nome
+            """,
+            (1,)
+        )
+
+        preferencias.extend([linha[0] for linha in cur.fetchall()])
+
+        cur.execute(
+            """
+            SELECT nome
+            FROM observacao
+            WHERE id_usuario = ?
+            AND status = 1
+            ORDER BY nome
+            """,
+            (1,)
+        )
+
+        preferencias.extend([linha[0] for linha in cur.fetchall()])
+
+        return preferencias
+
+    # Aumenta a quantidade de um ingrediente na despensa.
     def aumentar_ingrediente_despensa(self, id_despensa):
 
         cur = self.connection.cursor()
@@ -255,7 +304,7 @@ class DB:
 
         self.connection.commit()
 
-    # ALTERADO: novo método para diminuir a quantidade.
+
     # Se a quantidade chegar a zero, o item é excluído da despensa.
     def diminuir_ingrediente_despensa(self, id_despensa):
 
@@ -289,6 +338,54 @@ class DB:
             )
 
         self.connection.commit()
+
+    def lista_restricoes(self):
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            SELECT r.id, r.nome, ur.status, r.padrao
+            FROM restricao r
+            INNER JOIN usuario_restricao ur
+                ON ur.id_restricao = r.id
+            WHERE ur.id_usuario = ?
+            ORDER BY r.id
+            """,
+            (1,)
+        )
+
+        return [
+            {
+                "id": linha[0],
+                "nome": linha[1],
+                "status": bool(linha[2]),
+                "padrao": bool(linha[3])
+            }
+            for linha in cur.fetchall()
+        ]
+
+    def lista_observacoes(self):
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            SELECT id, nome, status, padrao
+            FROM observacao
+            WHERE id_usuario = ?
+            ORDER BY id
+            """,
+            (1,)
+        )
+
+        return [
+            {
+                "id": linha[0],
+                "nome": linha[1],
+                "status": bool(linha[2]),
+                "padrao": bool(linha[3])
+            }
+            for linha in cur.fetchall()
+        ]
 
     def cadastra_nao_gosta(self, nome_ingrediente):
 
@@ -370,6 +467,29 @@ class DB:
 
         self.connection.commit()
 
+    def lista_nao_gosta(self):
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            SELECT i.id, i.nome
+            FROM nao_gosta ng
+            INNER JOIN ingrediente i
+                ON i.id = ng.id_ingrediente
+            WHERE ng.id_usuario = ?
+            ORDER BY i.nome
+            """,
+            (1,)
+        )
+
+        return [
+            {
+                "id": linha[0],
+                "nome": linha[1]
+            }
+            for linha in cur.fetchall()
+        ]
+
     def cadastra_restricao(self, nome_restricao, status=True):
 
         cur = self.connection.cursor()
@@ -441,4 +561,151 @@ class DB:
 
         self.connection.commit()
 
+    def cadastra_observacao(self, nome_observacao, status=True):
+        cur = self.connection.cursor()
+
+        if not nome_observacao:
+            return None
+
+        nome_observacao = nome_observacao.strip()
+
+        if not nome_observacao:
+            return None
+
+        cur.execute(
+            "SELECT id FROM observacao WHERE nome = ?",
+            (nome_observacao,)
+        )
+
+        observacao = cur.fetchone()
+
+        if observacao:
+            id_observacao = observacao[0]
+
+            cur.execute(
+                """
+                UPDATE observacao
+                SET status = ?
+                WHERE id = ?
+                """,
+                (status, id_observacao)
+            )
+        else:
+            cur.execute(
+                """
+                INSERT INTO observacao (id_usuario, nome, status)
+                VALUES (?, ?, ?)
+                """,
+                (1, nome_observacao, status)
+            )
+
+            id_observacao = cur.lastrowid
+
+        self.connection.commit()
+
+        return id_observacao
+    
+
+    def remove_observacao(self, id_observacao):
+
+        cur = self.connection.cursor()
+
+        cur.execute(
+            """
+            DELETE FROM observacao
+            WHERE id_usuario = ? AND id = ?
+            """,
+            (1, id_observacao)
+        )
+
+        self.connection.commit()
+
+    def altera_status_observacao(self, id_observacao, status):
+        cur = self.connection.cursor()
+
+        status_db = 1 if status else 0
+
+        cur.execute(
+            """
+            UPDATE observacao
+            SET status = ?
+            WHERE id_usuario = ? AND id = ?
+            """,
+            (status_db, 1, id_observacao)
+        )
+
+        self.connection.commit()
+    
+    def cadastra_preferencias_padrao(self):
+        cur = self.connection.cursor()
+
+        restricoes = [
+            "Lactose",
+            "Glúten",
+            "Amendoim",
+            "Frutos do mar"
+        ]
+
+        observacoes = [
+            "Vegetariano",
+            "Vegano",
+            "Low carb",
+            "Sem açúcar"
+        ]
+
+        for nome in restricoes:
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO restricao (nome, padrao)
+                VALUES (?, ?)
+                """,
+                (nome, 1)
+            )
+
+            cur.execute(
+                """
+                UPDATE restricao
+                SET padrao = 1
+                WHERE nome = ?
+                """,
+                (nome,)
+            )
+
+            cur.execute(
+                "SELECT id FROM restricao WHERE nome = ?",
+                (nome,)
+            )
+
+            id_restricao = cur.fetchone()[0]
+
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO usuario_restricao
+                (id_usuario, id_restricao, status)
+                VALUES (?, ?, ?)
+                """,
+                (1, id_restricao, 0)
+            )
+
+        for nome in observacoes:
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO observacao
+                (id_usuario, nome, status, padrao)
+                VALUES (?, ?, ?, ?)
+                """,
+                (1, nome, 0, 1)
+            )
+
+            cur.execute(
+                """
+                UPDATE observacao
+                SET padrao = 1
+                WHERE id_usuario = ? AND nome = ?
+                """,
+                (1, nome)
+            )
+
+        self.connection.commit()
+    
 banco = DB()

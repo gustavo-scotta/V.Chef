@@ -67,7 +67,7 @@ def corrigir_json(texto_invalido):
     return extrair_json_array(texto_corrigido)
 
 
-def gerar_resposta(mensagem, ingredientes=None, preferencias=None):
+def gerar_resposta(mensagem, ingredientes=None, preferencias=None, nao_gosta=None):
 
     mensagem_lower = mensagem.lower()
     usar_despensa = "despensa" in mensagem_lower
@@ -97,6 +97,10 @@ def gerar_resposta(mensagem, ingredientes=None, preferencias=None):
         contexto += "\n\nPreferencias do usuario:\n"
         contexto += "\n".join(preferencias)
 
+    if nao_gosta:
+        contexto += "\n\nAlimentos que o usuario nao gosta:\n"
+        contexto += "\n".join(nao_gosta)
+
     prompt = f"""
     {contexto}
 
@@ -105,10 +109,31 @@ def gerar_resposta(mensagem, ingredientes=None, preferencias=None):
 
     Responda exatamente ao pedido do usuario.
 
+    Se o pedido do usuario nao for sobre comida, cozinha, receitas,
+    ingredientes, despensa, dieta, alimentacao ou restricoes alimentares:
+    - Retorne exatamente este JSON:
+    [
+      {{
+        "id": "0",
+        "titulo": "Pedido fora do tema",
+        "categoria": "Aviso",
+        "tempo": "",
+        "dificuldade": "",
+        "rendimento": "",
+        "descricao": "Posso ajudar apenas com receitas, ingredientes, despensa e preferencias alimentares.",
+        "imagem": "",
+        "ingredientes": [],
+        "modo_preparo": [],
+        "dica_chef": "",
+        "tags": ["fora do tema"]
+      }}
+    ]
+
     Se ele pedir receitas:
     - Gere exatamente 3 receitas.
     - Considere a despensa se o usuario pedir receitas com base na despensa.
     - Considere as preferencias do usuario sempre que elas forem informadas.
+    - Nunca use alimentos que o usuario marcou como nao gosta.
     - Use textos curtos para evitar JSON longo demais.
     - Retorne somente JSON valido.
 
