@@ -2,7 +2,7 @@
 
 O **V.Chef** é um assistente culinário inteligente que simula um chef profissional utilizando Inteligência Artificial.
 
-O sistema permite que o usuário converse com um chef virtual e receba **4 sugestões de pratos completas**, cada uma contendo:
+O sistema permite que o usuário converse com um chef virtual e receba **3 sugestões de pratos completas**, cada uma contendo:
 
 - Nome do prato
 - Tempo de preparo
@@ -20,16 +20,12 @@ O sistema permite que o usuário converse com um chef virtual e receba **4 suges
 - Flask
 - Gemini API (Google AI)
 - python-dotenv
+- Jinja
 
 ## Frontend
 - HTML5
 - CSS3
 - JavaScript
-
-## IA de Imagens (opcional)
-- Hugging Face (Stable Diffusion)
-- Leonardo AI
-- Outras APIs de geração de imagem
 
 ---
 
@@ -38,7 +34,7 @@ O sistema permite que o usuário converse com um chef virtual e receba **4 suges
 1. O usuário envia uma mensagem pelo chat (frontend)  
 2. O Flask recebe a requisição na rota `/chat`  
 3. A mensagem é enviada para o **Gemini**  
-4. A IA retorna **4 receitas em formato JSON**  
+4. A IA retorna **3 receitas em formato JSON**  
 5. (Opcional) O sistema gera imagens para cada prato  
 6. O frontend renderiza os pratos em **cards interativos**
 
