@@ -93,8 +93,7 @@ def gerar_resposta(mensagem, ingredientes=None, preferencias=None, nao_gosta=Non
         contexto += "\n".join(ingredientes_texto)
 
     if preferencias:
-
-        contexto += "\n\nPreferencias do usuario:\n"
+        contexto += "\n\nRestricoes alimentares obrigatorias do usuario:\n"
         contexto += "\n".join(preferencias)
 
     if nao_gosta:
@@ -132,8 +131,11 @@ def gerar_resposta(mensagem, ingredientes=None, preferencias=None, nao_gosta=Non
     Se ele pedir receitas:
     - Gere exatamente 3 receitas.
     - Considere a despensa se o usuario pedir receitas com base na despensa.
-    - Considere as preferencias do usuario sempre que elas forem informadas.
+    - As restricoes alimentares do usuario sao proibicoes obrigatorias.
+    - Nunca use ingredientes presentes nas restricoes alimentares do usuario.
     - Nunca use alimentos que o usuario marcou como nao gosta.
+    - Se algum ingrediente da despensa violar uma restricao ou estiver na lista de nao gosta, ignore esse ingrediente.
+    - Nao sugira substituicoes, acompanhamentos, molhos ou decoracoes que contenham esses itens proibidos.
     - Use textos curtos para evitar JSON longo demais.
     - Retorne somente JSON valido.
 

@@ -452,20 +452,6 @@ class DB:
         self.connection.commit()
 
         return id_ingrediente
-    
-    def remove_nao_gosta(self, id_ingrediente):
-
-        cur = self.connection.cursor()
-
-        cur.execute(
-            """
-            DELETE FROM nao_gosta
-            WHERE id_usuario = ? AND id_ingrediente = ?
-            """,
-            (1, id_ingrediente)
-        )
-
-        self.connection.commit()
 
     def lista_nao_gosta(self):
         cur = self.connection.cursor()
@@ -528,38 +514,6 @@ class DB:
         self.connection.commit()
 
         return id_restricao
-    
-    
-    def altera_status_restricao(self, id_restricao, status):
-
-        cur = self.connection.cursor()
-
-        status_db = 1 if status else 0
-
-        cur.execute(
-            """
-            UPDATE usuario_restricao
-            SET status = ?
-            WHERE id_usuario = ? AND id_restricao = ?
-            """,
-            (status_db, 1, id_restricao)
-        )
-
-        self.connection.commit()
-
-    def remove_restricao(self, id_restricao):
-
-        cur = self.connection.cursor()
-
-        cur.execute(
-            """
-            DELETE FROM usuario_restricao
-            WHERE id_usuario = ? AND id_restricao = ?
-            """,
-            (1, id_restricao)
-        )
-
-        self.connection.commit()
 
     def cadastra_observacao(self, nome_observacao, status=True):
         cur = self.connection.cursor()
@@ -605,37 +559,87 @@ class DB:
 
         return id_observacao
     
-
-    def remove_observacao(self, id_observacao):
-
+    def salvar_preferencias(self, nao_gosta, restricoes, observacoes):
         cur = self.connection.cursor()
 
+        # Limpa alimentos que o usuário não gosta.
+        cur.execute(
+            """
+            DELETE FROM nao_gosta
+            WHERE id_usuario = ?
+            """,
+            (1,)
+        )
+
+        # Remove restrições personalizadas do usuário.
+        cur.execute(
+            """
+            DELETE FROM usuario_restricao
+            WHERE id_usuario = ?
+            AND id_restricao IN (
+                SELECT id FROM restricao WHERE padrao = 0
+            )
+            """,
+            (1,)
+        )
+
+        # Desmarca todas as restrições padrão.
+        cur.execute(
+            """
+            UPDATE usuario_restricao
+            SET status = 0
+            WHERE id_usuario = ?
+            """,
+            (1,)
+        )
+
+        # Remove observações personalizadas.
         cur.execute(
             """
             DELETE FROM observacao
-            WHERE id_usuario = ? AND id = ?
+            WHERE id_usuario = ?
+            AND padrao = 0
             """,
-            (1, id_observacao)
+            (1,)
         )
 
-        self.connection.commit()
-
-    def altera_status_observacao(self, id_observacao, status):
-        cur = self.connection.cursor()
-
-        status_db = 1 if status else 0
-
+        # Desmarca todas as observações padrão.
         cur.execute(
             """
             UPDATE observacao
-            SET status = ?
-            WHERE id_usuario = ? AND id = ?
+            SET status = 0
+            WHERE id_usuario = ?
             """,
-            (status_db, 1, id_observacao)
+            (1,)
         )
 
         self.connection.commit()
-    
+
+        # Salva novamente alimentos "não gosto".
+        for nome in nao_gosta:
+            nome = nome.strip()
+
+            if nome:
+                self.cadastra_nao_gosta(nome)
+
+        # Salva novamente restrições que estão na tela.
+        for restricao in restricoes:
+            nome = restricao.get("nome", "").strip()
+            status = restricao.get("status", False)
+
+            if nome:
+                self.cadastra_restricao(nome, status)
+
+        # Salva novamente observações que estão na tela.
+        for observacao in observacoes:
+            nome = observacao.get("nome", "").strip()
+            status = observacao.get("status", False)
+
+            if nome:
+                self.cadastra_observacao(nome, status)
+
+        self.connection.commit()
+
     def cadastra_preferencias_padrao(self):
         cur = self.connection.cursor()
 

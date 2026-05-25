@@ -1,21 +1,9 @@
 // NÃO GOSTA
-async function addTag() {
+function addTag() {
   const input = document.getElementById("foodInput");
   const value = input.value.trim();
 
   if (!value) return;
-
-  const response = await fetch("/preferencias/nao-gosta", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      nome: value,
-    }),
-  });
-
-  const data = await response.json();
 
   const container = document.getElementById("tags-container");
 
@@ -24,11 +12,11 @@ async function addTag() {
   tag.className = "tag";
 
   tag.innerHTML = `
-      ${data.nome}
+      ${value}
 
       <button
         class="tag-remove"
-        onclick="removerNaoGosta(this, ${data.id})"
+        onclick="removerNaoGosta(this)"
       >
         ×
       </button>
@@ -39,38 +27,17 @@ async function addTag() {
   input.value = "";
 }
 
-async function removerNaoGosta(btn, id) {
-  const response = await fetch(`/preferencias/nao-gosta/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    alert("Erro ao remover alimento");
-    return;
-  }
-
+function removerNaoGosta(btn) {
   btn.closest(".tag").remove();
 }
 
 // RESTRIÇÕES
-async function addAllergy() {
+function addAllergy() {
   const input = document.getElementById("allergyInput");
 
   const value = input.value.trim();
 
   if (!value) return;
-
-  const response = await fetch("/preferencias/restricao", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      nome: value,
-    }),
-  });
-
-  const data = await response.json();
 
   const grid = document.getElementById("allergy-grid");
 
@@ -80,16 +47,15 @@ async function addAllergy() {
 
   card.innerHTML = `
 
-      <span class="toggle-label">${data.nome}</span>
+      <span class="toggle-label">${value}</span>
 
-      <button class="tag-remove-slider" onclick="removerRestricao(this, ${data.id})">
+      <button class="tag-remove-slider" onclick="removerRestricao(this)">
         ×
       </button>
 
       <label class="toggle-switch">
 
         <input type="checkbox"
-        checked onchange="alterarStatusRestricao(${data.id}, this.checked)"
         >
         <span class="slider"></span>
 
@@ -102,38 +68,17 @@ async function addAllergy() {
   input.value = "";
 }
 
-async function removerRestricao(btn, id) {
-  const response = await fetch(`/preferencias/restricao/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    alert("Erro ao remover restrição");
-    return;
-  }
-
+function removerRestricao(btn) {
   btn.parentElement.remove();
 }
 
 // OBSERVAÇÕES
-async function addDiet() {
+function addDiet() {
   const input = document.getElementById("dietInput");
 
   const value = input.value.trim();
 
   if (!value) return;
-
-  const response = await fetch("/preferencias/observacoes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      nome: value,
-    }),
-  });
-
-  const data = await response.json();
 
   const grid = document.getElementById("diet-grid");
 
@@ -143,17 +88,14 @@ async function addDiet() {
 
   card.innerHTML = `
 
-    <span class="toggle-label">${data.nome}</span>
-    <button class="tag-remove-slider" onclick="removerObservacao(this, ${data.id})">
+    <span class="toggle-label">${value}</span>
+    <button class="tag-remove-slider" onclick="removerObservacao(this)">
       ×
     </button>
 
     <label class="toggle-switch">
       
-      <input type="checkbox"
-      checked 
-      onchange="alterarStatusObservacao(${data.id}, this.checked)">
-
+      <input type="checkbox" checked>
       <span class="slider"></span>
 
     </label>
@@ -165,57 +107,78 @@ async function addDiet() {
   input.value = "";
 }
 
-async function removerObservacao(btn, id) {
-  const response = await fetch(`/preferencias/observacoes/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    alert("Erro ao remover restrição");
-    return;
-  }
-
+function removerObservacao(btn) {
   btn.parentElement.remove();
 }
 
-// Alterar status do SLIDE
-async function alterarStatusRestricao(id, status) {
-  await fetch("/preferencias/restricao/status", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: Number(id),
-      status: status,
-    }),
-  });
-}
-
-async function alterarStatusObservacao(id, status) {
-  await fetch("/preferencias/observacoes/status", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: Number(id),
-      status: status,
-    }),
-  });
-}
-
 // SAVE
-function savePrefs() {
+async function savePrefs() {
+  // Busca todas as tags de "não gosto" que estão na tela.
+  const naoGosta = [...document.querySelectorAll("#tags-container .tag")]
+    .map((tag) => tag.childNodes[0].textContent.trim())
+    .filter((nome) => nome);
+
+  // Busca todos os cards de restrições que estão na tela.
+  const restricoes = [
+    ...document.querySelectorAll("#allergy-grid .toggle-card"),
+  ].map((card) => {
+    const input = card.querySelector("input[type='checkbox']");
+
+    return {
+      // Se já veio do banco, tem id.
+      // Se foi criado agora na tela, ainda não tem id, então vai como null.
+      id: input.dataset.id || null,
+
+      nome: card.querySelector(".toggle-label").textContent.trim(),
+
+      status: input.checked,
+    };
+  });
+
+  // Busca todos os cards de observações que estão na tela.
+  const observacoes = [
+    ...document.querySelectorAll("#diet-grid .toggle-card"),
+  ].map((card) => {
+    const input = card.querySelector("input[type='checkbox']");
+
+    return {
+      id: input.dataset.id || null,
+
+      // Pega o texto da observação.
+      nome: card.querySelector(".toggle-label").textContent.trim(),
+
+      // Pega se o switch/checkbox está ligado ou desligado.
+      status: input.checked,
+    };
+  });
+
+  // Esse é o pacote completo de preferências que será enviado para o Flask.
+  const dados = {
+    nao_gosta: naoGosta,
+    restricoes: restricoes,
+    observacoes: observacoes,
+  };
+
+  const response = await fetch("/preferencias/salvar", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dados),
+  });
+
+  if (!response.ok) {
+    alert("Erro ao salvar preferências");
+    return;
+  }
+
+  // Se salvou com sucesso, mostra o toast na tela.
   const toast = document.getElementById("toast");
 
   toast.classList.add("show");
 
+  // Depois de 2,5 segundos, esconde o toast.
   setTimeout(() => {
     toast.classList.remove("show");
   }, 2500);
-}
-
-function somenteLetras(input) {
-  input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
 }

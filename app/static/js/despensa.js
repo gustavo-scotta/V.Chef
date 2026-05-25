@@ -285,5 +285,9 @@ function somenteLetras(input) {
   input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
 }
 
+function somenteNumeros(input) {
+  input.value = input.value.replace(/[^0-9]/g, "");
+}
+
 // Primeira renderizacao agora busca do banco.
 carregarIngredientes();
