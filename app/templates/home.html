@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block title %}Home - V.Chef{% endblock %} {% block
+page_css %}
+<!-- CSS exclusivo da Home: contem o chat e os cards de receita. -->
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/home.css') }}"
+/>
+{% endblock %} {% block content %}
+
+<div class="home-principal">
+  <div class="container-home">
+    <div class="card-opcoes">
+      <h2 class="titulo">🧑‍🍳 Bem vindo, {{usuario}}!</h2>
+      <ul>
+        <li>Culinaria Francesa</li>
+        <li>Comida Fit</li>
+        <li>Sobremesas</li>
+        <li>Carnes</li>
+        <li>Sucos</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="resposta-ia" class="area-resposta"></div>
+
+  <div class="area-input">
+    <div class="input-com-botao">
+      <input
+        id="mensagem"
+        type="text"
+        placeholder="Qual receita deseja aprender hoje"
+      />
+      <button id="botao-enviar">Enviar</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block page_js %}
+<!-- JS exclusivo da Home: controla envio de mensagens e renderizacao das respostas. -->
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}
