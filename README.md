@@ -45,6 +45,8 @@ O sistema permite que o usuário converse com um chef virtual e receba **3 suges
 Crie um arquivo `.env` na raiz do projeto:
 
 GEMINI_API_KEY=sua_chave_aqui  
+
+*Link para API:* https://aistudio.google.com/api-keys
 ---
 
 # Instalação
