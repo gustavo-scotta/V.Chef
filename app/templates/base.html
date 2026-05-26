@@ -17,7 +17,7 @@
 
         <!-- Navegacao padrao: barra visual que veio da tela de Preferencias e agora fica no layout base. -->
         <header class="topo">
-            <a class="logo-area" href="{{ url_for('main.home') }}" aria-label="Ir para a pagina inicial">
+            <a class="logo-area" href="{{ url_for('home.home') }}" aria-label="Ir para a pagina inicial">
                 <img
                     src="{{ url_for('static', filename='img/VchefLogo.png') }}"
                     alt="Vchef Logo"
@@ -36,13 +36,13 @@
 
         <!-- Abas compartilhadas: links Flask reais substituem botoes soltos da antiga Preferencias. -->
         <nav class="abas" aria-label="Navegacao principal">
-            <a class="aba {% if request.endpoint == 'main.despensa' %}ativa{% endif %}" href="{{ url_for('main.despensa') }}">
+            <a class="aba {% if request.endpoint == 'despensa.despensa_view' %}ativa{% endif %}" href="{{ url_for('despensa.despensa_view') }}">
                 Despensa
             </a>
-            <a class="aba {% if request.endpoint == 'main.home' %}ativa{% endif %}" href="{{ url_for('main.home') }}">
+            <a class="aba {% if request.endpoint == 'home.home' %}ativa{% endif %}" href="{{ url_for('home.home') }}">
                 Faça sua Receita
             </a>
-            <a class="aba {% if request.endpoint == 'main.preferencias' %}ativa{% endif %}" href="{{ url_for('main.preferencias') }}">
+            <a class="aba {% if request.endpoint == 'preferencias.preferencias' %}ativa{% endif %}" href="{{ url_for('preferencias.preferencias') }}">
                 Preferências
             </a>
         </nav>
