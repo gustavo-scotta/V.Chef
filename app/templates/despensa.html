@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VChef - Despensa</title>
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="topo">
+
+      <div class="logo-area">
+        <img src="logo.png" alt="Logo VChef" class="logo-img">
+        <div class="logo">VChef</div>
+      </div>
+
+      <div class="perfil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </div>
+
+    </header>
+
+    <nav class="abas">
+      <button class="aba ativa">Despensa</button>
+      <button class="aba">Faça sua Receita</button>
+      <button class="aba">Preferências</button>
+    </nav>
+
+    <section class="pesquisa-area">
+      <input type="text" id="pesquisa" class="pesquisa" placeholder="Pesquisar ingrediente">
+      <button class="btn-add" id="abrirModal">+ Adicionar Ingrediente</button>
+    </section>
+
+    <section class="categorias">
+      <button class="categoria ativa" data-categoria="Todos">Todos</button>
+      <button class="categoria" data-categoria="Vegetais">Vegetais</button>
+      <button class="categoria" data-categoria="Frutas">Frutas</button>
+      <button class="categoria" data-categoria="Carnes">Carnes</button>
+      <button class="categoria" data-categoria="Temperos">Temperos</button>
+      <button class="categoria" data-categoria="Laticínios">Laticínios</button>
+      <button class="categoria" data-categoria="Grãos">Grãos</button>
+      <button class="categoria" data-categoria="Outros">Outros</button>
+    </section>
+
+    <main class="cards" id="cards"></main>
+
+  </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h2>Adicionar Ingrediente</h2>
+      <input type="text" id="nomeInput" placeholder="Digite o ingrediente">
+      <select id="categoriaSelect">
+        <option value="Automático">Categoria automática</option>
+        <option value="Vegetais">Vegetais</option>
+        <option value="Frutas">Frutas</option>
+        <option value="Carnes">Carnes</option>
+        <option value="Temperos">Temperos</option>
+        <option value="Laticínios">Laticínios</option>
+        <option value="Grãos">Grãos</option>
+        <option value="Outros">Outros</option>
+      </select>
+      <select id="unidadeSelect">
+        <option value="unidades">Unidades</option>
+        <option value="kg">Kilogramas</option>
+        <option value="g">Gramas</option>
+        <option value="l">Litros</option>
+        <option value="ml">Mililitros</option>
+      </select>
+      <div class="campo-qtd">
+        <input type="number" id="quantidadeInput" placeholder="Quantidade" min="0.1" step="0.1" value="1">
+      </div>
+      <button class="adicionar" id="adicionarBtn">Adicionar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
