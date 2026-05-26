@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}V.Chef{% endblock %}</title>
+
+    <!-- Base comum: carrega somente estilos compartilhados entre todas as paginas. -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+    <!-- CSS por pagina: cada template informa o proprio arquivo dentro deste bloco. -->
+    {% block page_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Navegacao padrao: barra visual que veio da tela de Preferencias e agora fica no layout base. -->
+        <header class="topo">
+            <a class="logo-area" href="{{ url_for('home.home') }}" aria-label="Ir para a pagina inicial">
+                <img
+                    src="{{ url_for('static', filename='img/VchefLogo.png') }}"
+                    alt="Vchef Logo"
+                    class="logo-img"
+                >
+                <div class="logo">VChef</div>
+            </a>
+
+            <div class="perfil" aria-label="Perfil do usuario">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
+            </div>
+        </header>
+
+        <!-- Abas compartilhadas: links Flask reais substituem botoes soltos da antiga Preferencias. -->
+        <nav class="abas" aria-label="Navegacao principal">
+            <a class="aba {% if request.endpoint == 'despensa.despensa_view' %}ativa{% endif %}" href="{{ url_for('despensa.despensa_view') }}">
+                Despensa
+            </a>
+            <a class="aba {% if request.endpoint == 'home.home' %}ativa{% endif %}" href="{{ url_for('home.home') }}">
+                Faça sua Receita
+            </a>
+            <a class="aba {% if request.endpoint == 'preferencias.preferencias' %}ativa{% endif %}" href="{{ url_for('preferencias.preferencias') }}">
+                Preferências
+            </a>
+        </nav>
+
+        <!-- Conteudo da pagina atual: home, despensa ou preferencias entram aqui. -->
+        {% block content %}{% endblock %}
+
+    </div>
+
+    <!-- JS por pagina: evita carregar scripts que dependem de elementos de outra tela. -->
+    {% block page_js %}{% endblock %}
+
+</body>
+</html>
