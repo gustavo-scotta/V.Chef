@@ -1,0 +1,185 @@
+{% extends 'base.html' %} {% block title %}Preferências V.Chef{% endblock %} {% block
+page_css %}
+<!-- CSS exclusivo da preferencias: contem o chat e os cards de receita. -->
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/preferencias.css') }}"
+/>
+{% endblock %} {% block content %}
+
+<!-- NÃO GOSTO -->
+<section class="section">
+
+  <h2 class="section-title">Alimentos que não gosto</h2>
+
+  <div class="tags-container" id="tags-container">
+
+    {% for item in nao_gosta %}
+      <div class="tag">
+        {{ item.nome }}
+
+        <button
+          class="tag-remove"
+          data-id="{{ item.id }}"
+          onclick="removerNaoGosta(this, this.dataset.id)"
+        >
+          ×
+        </button>
+      </div>
+    {% endfor %}
+
+  </div>
+
+  <div class="pesquisa-area">
+
+    <input
+      type="text"
+      id="foodInput"
+      class="pesquisa"
+      placeholder="Adicionar alimento"
+      oninput="somenteLetras(this)"
+      onkeydown="if(event.key==='Enter') addTag()"
+    >
+
+    <button class="btn-add" onclick="addTag()">
+      + Adicionar
+    </button>
+
+  </div>
+
+</section>
+
+<!-- RESTRIÇÕES -->
+<section class="section">
+
+  <h2 class="section-title">Restrições</h2>
+
+  <div class="toggle-grid" id="allergy-grid">
+
+    {% for restricao in restricoes %}
+      <div class="toggle-card">
+
+        <span class="toggle-label">{{ restricao.nome }}</span>
+
+        {% if not restricao.padrao %}
+          <button
+            class="tag-remove-slider"
+            data-id="{{ restricao.id }}"
+            onclick="removerRestricao(this, this.dataset.id)"
+          >
+            ×
+          </button>
+        {% endif %}
+
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            data-id="{{ restricao.id }}"
+            oninput="somenteLetras(this)"
+            {% if restricao.status %}checked{% endif %}
+            onchange="alterarStatusRestricao(this.dataset.id, this.checked)"
+          >
+          <span class="slider"></span>
+        </label>
+
+      </div>
+    {% endfor %}
+
+  </div>
+
+  <div class="pesquisa-area">
+
+    <input
+      type="text"
+      id="allergyInput"
+      class="pesquisa"
+      placeholder="Adicionar restrição"
+      oninput="somenteLetras(this)"
+      onkeydown="if(event.key==='Enter') addAllergy()"
+    >
+
+    <button class="btn-add" onclick="addAllergy()">
+      + Adicionar
+    </button>
+
+  </div>
+
+</section>
+
+<!-- OBSERVAÇÕES -->
+<section class="section">
+
+  <h2 class="section-title">Observações</h2>
+
+  <div class="toggle-grid" id="diet-grid">
+
+    {% for observacao in observacoes %}
+      <div class="toggle-card">
+
+        <span class="toggle-label">{{ observacao.nome }}</span>
+
+        {% if not observacao.padrao %}
+          <button
+            class="tag-remove-slider"
+            data-id="{{ observacao.id }}"
+            onclick="removerObservacao(this, this.dataset.id)"
+          >
+            ×
+          </button>
+        {% endif %}
+
+        <label class="toggle-switch">
+          <input
+            type="checkbox"
+            data-id="{{ observacao.id }}"
+            oninput="somenteLetras(this)"
+            {% if observacao.status %}checked{% endif %}
+            onchange="alterarStatusObservacao(this.dataset.id, this.checked)"
+          >
+          <span class="slider"></span>
+        </label>
+
+      </div>
+    {% endfor %}
+
+  </div>
+
+  <div class="pesquisa-area">
+
+    <input
+      type="text"
+      id="dietInput"
+      class="pesquisa"
+      placeholder="Adicionar observação"
+      oninput="somenteLetras(this)"
+      onkeydown="if(event.key==='Enter') addDiet()"
+    >
+
+    <button class="btn-add" onclick="addDiet()">
+      + Adicionar
+    </button>
+
+  </div>
+
+</section>
+
+<!-- SAVE -->
+<div class="acoes">
+
+  <button class="acao-btn save-btn" onclick="savePrefs()">
+    Salvar Preferências
+  </button>
+
+</div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+✓ Preferências salvas!
+</div>
+
+{% endblock %} {% block page_js %}
+<!-- JS exclusivo da Home: controla envio de mensagens e renderizacao das respostas. -->
+<script src="{{ url_for('static', filename='js/preferencias.js') }}"></script>
+{% endblock %}
